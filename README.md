@@ -97,7 +97,11 @@ Here's an incomplete and biaised comparison with [DetectionLab](https://github.c
 
 - Clone this repository
 
-- Create a virtual env and install Ansible dependencies:
+```
+git clone https://github.com/christophetd/Adaz.git
+```
+
+- Create a virtual env and install Ansible dependencies
 
 ```bash
 # Note: the virtual env needs to be in ansible/venv
@@ -107,7 +111,7 @@ pip install -r ansible/requirements.txt
 deactivate
 ```
 
-- Initialize Terraform:
+- Initialize Terraform
 
 ```bash
 cd terraform
