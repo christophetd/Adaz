@@ -160,6 +160,7 @@ terraform apply -var 'region=East US 2'
 
 - [Frequently Asked Questions](./doc/faq.md)
 - [`domain.yml` reference](./doc/configuration_reference.md)
+- [Audit policies enabled](./doc/audit_policies.md)
 - [Detailed architecture](./doc/architecture.md)
 - [Troubleshooting common issues](./doc/troubleshooting.md)
 - [Common Operations: adding users, destroying the lab, etc.](./doc/operations.md)
