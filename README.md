@@ -1,4 +1,4 @@
-# Active Directory Hunting Lab in Azure
+# ADAZ - Active Directory Hunting Lab in Azure
 
 ![](https://badgen.net/badge/icon/azure?icon=azure&label=platform) ![](https://badgen.net/github/release/christophetd/adaz)
 
