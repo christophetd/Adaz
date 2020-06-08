@@ -18,6 +18,9 @@
   - Account management
   - DS Access
   - Logon/Logoff
+  - Privilege use
+  - Policy change
+  - System
 
 # https://support.microsoft.com/en-us/help/4047777/security-event-log-forwarding-fails-with-error-0x138c-and-5004
 - name: Set custom security descriptor on event logs
