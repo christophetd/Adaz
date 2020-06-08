@@ -1,0 +1,11 @@
+- name: Create desktop shortcuts
+  win_shortcut:
+    src: powershell.exe
+    dest: Desktop\Powershell.lnk
+
+- name: Hide ugly Windows 10 taskbar
+  win_regedit:
+    path: HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search
+    name: SearchboxTaskbarMode
+    data: "0"
+    type: dword

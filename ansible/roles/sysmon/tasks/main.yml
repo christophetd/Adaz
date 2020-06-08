@@ -1,0 +1,24 @@
+- name: Copy sysmon conf
+  win_template:
+    src: ./templates/sysmon.conf
+    dest: "{{ config_file_path }}"
+  register: sysmon_conf
+
+- name: Test whether Sysmon executable is present
+  win_stat:
+    path: "{{ executable_path }}"
+  register: sysmon_executable
+
+- name: Download Sysmon
+  win_get_url:
+    url: https://live.sysinternals.com/Sysmon64.exe
+    dest: "{{ executable_path }}"
+  when: not sysmon_executable.stat.exists
+
+- name: Install Sysmon
+  win_command: "{{ executable_path }} -i {{ config_file_path }} -accepteula"
+  when: not sysmon_executable.stat.exists
+
+- name: Update Sysmon configuation
+  win_command: "{{ executable_path }} -c {{ config_file_path }}"
+  when: sysmon_executable.stat.exists and sysmon_conf.changed

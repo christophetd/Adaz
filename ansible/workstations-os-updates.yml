@@ -1,0 +1,20 @@
+---
+- name: Apply Windows updates to workstations
+  hosts: workstations
+  gather_facts: no
+  tasks:
+  - name: Include domain configuration file
+    include_vars:
+      file: ../domain.yml
+      name: domain
+  - name: Read credentials from domain configuration file
+    set_fact:
+      ansible_user: "{{ domain.default_local_admin.username }}"
+      ansible_password: "{{ domain.default_local_admin.password }}"
+  - name: Apply Windows updates
+    win_updates:
+      reboot: yes # reboot if necessary after updates
+      category_names:
+      - CriticalUpdates
+      - SecurityUpdates
+      - UpdateRollups

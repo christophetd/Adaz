@@ -1,0 +1,65 @@
+---
+- name: Ensure necessary Microsoft features are installed
+  win_feature:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  # Available features can be listed using Get-WindowsFeature
+  - AD-Domain-Services
+  - RSAT-AD-AdminCenter
+  - RSAT-ADDS-Tools
+  tags: base
+ 
+- name: Generate random s afe mode password TODO
+  set_fact:
+    #safe_mode_password: "{{ lookup('password', 'safe_mode_password.txt length=32') }}"
+    safe_mode_password: testesttww111.
+
+- name: Ensure domain is created
+  win_domain:
+    dns_domain_name: "{{ domain.dns_name }}"
+    safe_mode_password: "Toto123123tototototo"
+  register: domain_creation
+  tags: base
+
+- name: Reboot if domain was just created
+  win_reboot: {}
+  when: domain_creation.reboot_required
+  tags: base
+
+- name: Ensure domain controllers are promoted
+  win_domain_controller:
+    dns_domain_name: "{{ domain.dns_name }}"
+    domain_admin_user: "{{ domain.initial_domain_admin.username }}@{{ domain.dns_name }}"
+    domain_admin_password: "{{ domain.initial_domain_admin.password }}"
+    safe_mode_password: "Toto123123tototototo"
+    state: domain_controller
+    log_path: C:\Windows\Temp\promotion.txt
+  register: dc_promotion
+  tags: base
+
+- name: Reboot if server was just promoted to a domain controller
+  win_reboot: {}
+  when: dc_promotion.reboot_required
+  tags: base
+
+- name: Ensure xActiveDirectory PS DSC module is installed
+  win_psmodule:
+    name: xActiveDirectory
+    state: present
+  tags: base
+
+- name: Wait for domain to be available
+  win_dsc:
+    resource_name: xWaitForADDomain
+    DomainName: "{{ domain.dns_name }}"
+    RetryCount: 100
+    RetryIntervalSec: 10
+  when: packer is not defined
+  tags: base
+
+- name: Sleep when building with packer (TODO)
+  pause:
+    minutes: 2
+  when: packer is defined
+  tags: base

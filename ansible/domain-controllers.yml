@@ -1,0 +1,15 @@
+---
+- name: Configure domain controllers
+  hosts: domain_controllers
+  gather_facts: no
+  roles:
+  - role: domain-controller
+  - role: windows-base
+  - role: wef-collector
+    tags: [ wef ]
+  - role: sysmon
+    tags: [ sysmon ]
+  - role: logging-base
+    tags: [ logging-base ]
+  - role: winlogbeat
+    tags: [ winlogbeat ]

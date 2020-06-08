@@ -1,0 +1,23 @@
+---
+- name: Install winlogbeat
+  win_package:
+    path: https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-7.7.0-windows-x86_64.msi
+    product_id: '{F9BD519B-6B64-40E5-B772-A6695091C35E}'
+    log_path: C:\winlogbeat.log
+
+- name: Find Elasticsearch IP
+  set_fact:
+    elasticsearch_ip: "{{ hostvars[groups['elasticsearch'][0]].private_ipv4_addresses[0] }}"
+  
+- name: Ensure Winlogbeat config file is present
+  win_template:
+    src: ./templates/winlogbeat.yml.j2
+    dest: C:\ProgramData\Elastic\Beats\winlogbeat\winlogbeat.yml
+  notify: restart winlogbeat
+
+- name: Ensure Winlogbeat service exists and is started
+  win_service:
+    name: winlogbeat
+    state: started
+    start_mode: auto
+  register: winlogbeat_service

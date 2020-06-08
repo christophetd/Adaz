@@ -1,0 +1,4 @@
+- name: restart wec service
+  win_service:
+    name: Wecsvc
+    state: restarted

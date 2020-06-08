@@ -1,0 +1,56 @@
+---
+- name: Ensure the Windows Event Collector service is started
+  win_service:
+    name: Wecsvc
+    state: started
+    start_mode: auto
+
+- name: Ensure ForwardedEvents event log is enabled
+  win_command: powershell.exe -
+  args:
+    stdin: >
+      $EventLog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration "ForwardedEvents";
+      $EventLog.IsEnabled = $True;
+      $EventLog.SaveChanges()
+
+- name: List active WEF subscriptions
+  win_command: wecutil enum-subscription
+  register: wef_subscriptions
+
+- name: Check if subscription is being created
+  set_fact:
+    subscription_being_created: "{{ wef_subscription_name not in wef_subscriptions.stdout_lines }}"
+
+- name: Upload WEF subscription XML
+  win_template:
+    src: ./templates/wef_subscription.xml
+    dest: C:\subscription.xml
+
+- name: Update WEF subscriptions
+  win_command: wecutil set-subscription /c:subscription.xml
+  args:
+    chdir: C:\
+  when: "wef_subscription_name in wef_subscriptions.stdout_lines"
+
+- name: Create WEF subscription
+  win_command: wecutil create-subscription subscription.xml
+  args:
+    chdir: C:\
+  when: "wef_subscription_name not in wef_subscriptions.stdout_lines"
+  ignore_errors: yes # TODO - fix when ran by packer
+  register: creation
+
+# https://support.microsoft.com/en-us/help/4494462/events-not-forwarded-if-the-collector-runs-windows-server
+# Apparently needed if WEC server and client are not in the same subnet
+- win_command: netsh http show urlacl
+  register: netsh_urlacl
+
+- name: Remove ACL permissions on WEC url
+  win_command: 'netsh http delete urlacl url=http://+:5985/wsman/'
+  when: "('http://+:5985/wsman/' in netsh_urlacl.stdout and 'Wecsvc' not in netsh_urlacl.stdout)"
+  register: netsh_urlacl_remove
+
+- name: Fix ACL permissions
+  win_command: 'netsh http add urlacl url=http://+:5985/wsman/ sddl=D:(A;;GX;;;S-1-5-80-569256582-2953403351-2909559716-1301513147-412116970)(A;;GX;;;S-1-5-80-4059739203-877974739-1245631912-527174227-2996563517)'
+  when: netsh_urlacl_remove.changed or 'http://+:5985/wsman/' not in netsh_urlacl.stdout
+  notify: restart wec service

@@ -1,0 +1,13 @@
+winlogbeat.event_logs:
+- name: ForwardedEvents
+  forwarded: true
+- name: Security
+- name: Microsoft-Windows-Sysmon/Operational
+
+output.elasticsearch:
+  hosts:
+  - {{ elasticsearch_ip }}:9200
+  index: "winlogbeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+
+setup.template.name: "winlogbeat"
+setup.template.pattern: "winlogbeat-*"

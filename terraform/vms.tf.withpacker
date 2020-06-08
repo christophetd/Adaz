@@ -1,0 +1,70 @@
+# DC
+resource "azurerm_network_interface" "main" {
+  name                = "${var.prefix}-nic"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  ip_configuration {
+    name                          = "static"
+    subnet_id                     = azurerm_subnet.servers.id
+    private_ip_address_allocation = "Static"
+    private_ip_address = "10.0.2.100"
+    public_ip_address_id = azurerm_public_ip.main.id
+  }
+}
+resource "azurerm_network_interface_security_group_association" "main" {
+  network_interface_id      = azurerm_network_interface.main.id
+  network_security_group_id = azurerm_network_security_group.main.id
+}
+
+# TODO: rename to WC
+resource "azurerm_virtual_machine" "main" {
+  name                  = "${var.prefix}-ws2019"
+  location              = azurerm_resource_group.main.location
+  resource_group_name   = azurerm_resource_group.main.name
+  network_interface_ids = [azurerm_network_interface.main.id]
+  vm_size               = "Standard_DS1_v2"
+
+  # Uncomment this line to delete the OS disk automatically when deleting the VM
+  delete_os_disk_on_termination = true
+
+  # Uncomment this line to delete the data disks automatically when deleting the VM
+  delete_data_disks_on_termination = true
+
+  storage_image_reference {
+    id = data.azurerm_image.dc.id # !
+  }
+
+  storage_os_disk {
+    name              = "osdisk"
+    caching           = "ReadWrite"
+    create_option     = "FromImage" # !
+    managed_disk_type = "Standard_LRS"
+  }
+
+  os_profile {
+    computer_name  = "DC-1"
+    # TODO: extract passwords to shared conf file
+    # TODO: does this change anything from the packer build file?
+    # TODO: in any case, document that 'admin' and 'Administrator' names are not allowed and yield error 400
+    admin_username = "christophe"
+    admin_password = "Greem broom!"
+  }
+  os_profile_windows_config {
+      enable_automatic_upgrades = false
+      timezone = "Central European Standard Time"
+      winrm {
+        protocol = "HTTP"
+      }
+  }
+
+  tags = {
+    kind = "domain-controller"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../ansible"
+    command = "ansible-playbook -i azure_rm.yml domain-computers.yml -vvvv "
+    on_failure = "continue"
+  }
+}

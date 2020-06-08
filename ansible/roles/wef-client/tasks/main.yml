@@ -1,0 +1,13 @@
+- name: Ensure WinRM is set to auto-start
+  win_service:
+    name: WinRM
+    state: started
+    start_mode: auto
+
+- name: Ensure WEF subscription managers are configured
+  win_regedit:
+    path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\EventForwarding\SubscriptionManager
+    name: "1"
+    data: "Server=http://{{ domain.dc_name }}.{{ domain.dns_name }}:5985/wsman/SubscriptionManager/WEC,Refresh=10"
+    type: string
+  notify: gpupdate

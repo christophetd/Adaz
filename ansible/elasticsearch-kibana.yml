@@ -1,0 +1,8 @@
+---
+- name: Configure Elasticsearch and Kibana
+  hosts: elasticsearch
+  gather_facts: no
+  roles:
+  - elasticsearch-kibana
+  vars:
+    ansible_user: hunter
