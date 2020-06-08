@@ -1,4 +1,4 @@
-# ADAZ - Active Directory Hunting Lab in Azure
+# Adaz: Active Directory Hunting Lab in Azure
 
 ![](https://badgen.net/badge/icon/azure?icon=azure&label=platform) ![](https://badgen.net/github/release/christophetd/adaz)
 
@@ -45,9 +45,9 @@ enable_windows_firewall: yes
 
 - Windows Event Forwarding pre-configured
 - Audit policies pre-configured
-- Sysmon
-- Logs centralized in an Elasticsearch instance and can easily be queried from the Kibana UI
-- Domain easily configurable via a high-level YAML configuration file
+- Sysmon installed
+- Logs centralized in an Elasticsearch instance which can easily be queried from the Kibana UI
+- Domain easily configurable via YAML configuration file
 
 Here's an incomplete and biaised comparison with [DetectionLab](https://github.com/clong/DetectionLab):
 
@@ -55,7 +55,7 @@ Here's an incomplete and biaised comparison with [DetectionLab](https://github.c
 |                                  |        Adaz       |    DetectionLab    |
 |:--------------------------------:|:------------------:|:------------------:|
 |       Public cloud support       |        Azure       |         AWS        |
-| Expected time to spin up a lab   |     20 minutes     |     25 minutes     |
+| Expected time to spin up a lab   |     15-20 minutes     |     25 minutes     |
 | Log management & querying        |     Elasticsearch+Kibana |     Splunk Enterprise     |
 |                WEF               | :heavy_check_mark: | :heavy_check_mark: |
 |          Audit policies          | :heavy_check_mark: | :heavy_check_mark: |
@@ -150,7 +150,7 @@ workstations_public_ips = {
 
 > Don't worry if during the provisioning you see a few messages looking like `FAILED - RETRYING: List Kibana index templates (xx retries left)`
 
-By default, resources are deployed in the `West Europe` region under a resource group `ad-hunting-lab`. You can control the region with a Terraform variables:
+By default, resources are deployed in the `West Europe` region under a resource group `ad-hunting-lab`. You can control the region with a Terraform variable:
 
 ```
 terraform apply -var 'region=East US 2'
@@ -173,5 +173,5 @@ I will heavily rely on the number of thumbs up votes you will leave on [`feature
 
 ### Suggestions and bugs
 
-Feel free to open an issue or to tweet [@christophetd[(https://twitter.com/christophetd).
+Feel free to open an issue or to tweet [@christophetd](https://twitter.com/christophetd).
 
