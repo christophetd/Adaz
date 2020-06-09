@@ -1,5 +1,5 @@
 ---
-- name: Apply Windows updates to workstations
+- name: Apply Windows updates to domain controllers
   hosts: domain_controllers
   gather_facts: no
   tasks:
