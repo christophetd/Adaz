@@ -8,10 +8,11 @@
 
 ## How much does it cost?
 
-This is only an estimate based on two 10-hour periods I tested. Feel free to reach out if you have estimates for other regions.
+This is only an estimate based on two 10-hour periods I tested. Feel free to reach out if you have estimates for other regions or if you have evidence that the estimates below are inaccurate.
 
 |    Region    |  Number of workstations |  Size of DC and workstations |  Estimated price per hour (USD) |
 |:------------:|:-----------------------:|:----------------------------:|:-------------------------------:|
+| West Europe  |            2            |         Standard_D1_v2       |               **$0.33**          |
 |   Us East 2  |            2            |         Standard_D1_v2       |               **$0.43**          |
 
 The cost is not negligible if you leave the lab run continuously. It is mostly induced by the virtual machines (~90%) and the storage (~9%), so you can reduce it by spinning up only 1 workstation. You cannot play on the storage costs because they are enforced by the VM type and the base image.
