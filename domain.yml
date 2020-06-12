@@ -13,11 +13,11 @@ organizational_units: {}
 
 # Domain users - by default, password := username
 users:
-- username: christophe
-- username: brent
-- username: dany
+- username: christophe@hunter.lab
+- username: brent@hunter.lab
+- username: dany@hunter.lab
   password: Dany123
-- username: karen
+- username: karen@hunter.lab
 
 # Domain groups
 groups:
