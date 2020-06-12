@@ -1,8 +1,8 @@
 ---
 name: Bug report
-about: Thank you for taking the time to report a bug!
+about: Something is not working properly
 title: ''
-labels: bug, needs-investigation
+labels: bug
 assignees: christophetd
 
 ---
@@ -13,4 +13,9 @@ A clear and concise description of what the bug is.
 **What OS are you using?**
 Windows 10 / Ubuntu 18.04 / Mac OS X
 
-**Full Terraform / Ansible output if applicable**
+**Your `domain.yml` file?**
+If you customized the `domain.yml` file, please include it below
+
+**Full Terraform / Ansible output?**
+If applicable, please include the full Terraform / Ansible output
+
