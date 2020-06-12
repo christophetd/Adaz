@@ -18,4 +18,3 @@ If you customized the `domain.yml` file, please include it below
 
 **Full Terraform / Ansible output?**
 If applicable, please include the full Terraform / Ansible output
-
