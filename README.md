@@ -54,7 +54,7 @@ Here's an incomplete and biaised comparison with [DetectionLab](https://github.c
 
 |                                  |        Adaz       |    DetectionLab    |
 |:--------------------------------:|:------------------:|:------------------:|
-|       Public cloud support       |        Azure       |         AWS        |
+|       Public cloud support       |        Azure       |         AWS, *Azure ([beta](https://github.com/clong/DetectionLab/tree/master/Azure))*     |
 | Expected time to spin up a lab   |     15-20 minutes     |     25 minutes     |
 | Log management & querying        |     Elasticsearch+Kibana |     Splunk Enterprise     |
 |                WEF               | :heavy_check_mark: | :heavy_check_mark: |
