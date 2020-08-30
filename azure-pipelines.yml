@@ -19,5 +19,5 @@ stages:
     - script: |
         ls && whoami
         wget https://releases.hashicorp.com/terraform/0.13.1/terraform_0.13.1_linux_amd64.zip -O /tmp/terraform.zip
-        unzip -d /usr/local/bin/ /tmp/terraform.zip
+        unzip /tmp/terraform.zip -d /usr/local/bin/
         terraform --version
