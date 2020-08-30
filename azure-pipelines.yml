@@ -1,0 +1,23 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+
+stages:
+- stage: setup
+  displayName: Setup CI environment
+  jobs:
+  - job: download-terraform
+    steps:
+    - script: |
+        ls && whoami
+        wget https://releases.hashicorp.com/terraform/0.13.1/terraform_0.13.1_linux_amd64.zip -O /tmp/terraform.zip
+        unzip -d /usr/local/bin/ terraform.zip
+        terraform --version
