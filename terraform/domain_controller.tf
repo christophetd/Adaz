@@ -62,6 +62,11 @@ resource "azurerm_virtual_machine" "dc" {
     command = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --tags=common,base -v'"
   }
 
+  provisioner "local-exec" {
+    working_dir = "${path.root}/../ansible"
+    command = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --tags=common,init -v'"
+  }
+
   tags = {
     kind = "domain-controller"
   }
@@ -71,8 +76,11 @@ resource "azurerm_virtual_machine" "dc" {
 resource "null_resource" "provision_rest_of_dc_after_creation" {
   provisioner "local-exec" {
     working_dir = "${path.root}/../ansible"
-    command = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --skip-tags=base -v'"
+    command = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --skip-tags=base,init -v'"
   }
 
-  depends_on = [azurerm_virtual_machine.dc]
+  depends_on = [
+    azurerm_virtual_machine.dc,
+    azurerm_virtual_machine.es_kibana
+  ]
 }
