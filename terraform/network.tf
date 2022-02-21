@@ -38,7 +38,7 @@ resource "azurerm_network_security_group" "windows" {
     source_address_prefix      = "${local.public_ip}/32"
     destination_address_prefix = "*"
   }
-  
+
   security_rule {
     name                       = "Allow-WinRM"
     priority                   = 101

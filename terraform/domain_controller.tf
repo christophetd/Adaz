@@ -7,8 +7,8 @@ resource "azurerm_network_interface" "main" {
     name                          = "static"
     subnet_id                     = azurerm_subnet.servers.id
     private_ip_address_allocation = "Static"
-    private_ip_address = cidrhost(var.servers_subnet_cidr, 10)
-    public_ip_address_id = azurerm_public_ip.main.id
+    private_ip_address            = cidrhost(var.servers_subnet_cidr, 10)
+    public_ip_address_id          = azurerm_public_ip.main.id
   }
 }
 
@@ -49,22 +49,22 @@ resource "azurerm_virtual_machine" "dc" {
     admin_password = local.domain.initial_domain_admin.password
   }
   os_profile_windows_config {
-      enable_automatic_upgrades = false
-      timezone = "Central European Standard Time"
-      winrm {
-        protocol = "HTTP"
-      }
+    enable_automatic_upgrades = false
+    timezone                  = "Central European Standard Time"
+    winrm {
+      protocol = "HTTP"
+    }
   }
 
   # Provision base domain and DC
   provisioner "local-exec" {
     working_dir = "${path.root}/../ansible"
-    command = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --tags=common,base -v'"
+    command     = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --tags=common,base -v'"
   }
 
   provisioner "local-exec" {
     working_dir = "${path.root}/../ansible"
-    command = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --tags=common,init -v'"
+    command     = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --tags=common,init -v'"
   }
 
   tags = {
@@ -76,7 +76,7 @@ resource "azurerm_virtual_machine" "dc" {
 resource "null_resource" "provision_rest_of_dc_after_creation" {
   provisioner "local-exec" {
     working_dir = "${path.root}/../ansible"
-    command = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --skip-tags=base,init -v'"
+    command     = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --skip-tags=base,init -v'"
   }
 
   depends_on = [

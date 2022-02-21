@@ -1,6 +1,6 @@
 resource "random_password" "elasticsearch" {
-  length = 16
-  special = true
+  length           = 16
+  special          = true
   override_special = "_%@"
 }
 
@@ -13,8 +13,8 @@ resource "azurerm_network_interface" "elasticsearch" {
     name                          = "static"
     subnet_id                     = azurerm_subnet.servers.id
     private_ip_address_allocation = "Static"
-    private_ip_address = cidrhost(var.servers_subnet_cidr, 100)
-    public_ip_address_id = azurerm_public_ip.elasticsearch.id
+    private_ip_address            = cidrhost(var.servers_subnet_cidr, 100)
+    public_ip_address_id          = azurerm_public_ip.elasticsearch.id
   }
 }
 resource "azurerm_network_interface_security_group_association" "elasticsearch" {
@@ -22,7 +22,7 @@ resource "azurerm_network_interface_security_group_association" "elasticsearch" 
   network_security_group_id = azurerm_network_security_group.elasticsearch_kibana.id
 }
 resource "azurerm_virtual_machine" "es_kibana" {
-  
+
   name                  = "es-kibana"
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
@@ -60,7 +60,7 @@ resource "azurerm_virtual_machine" "es_kibana" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      path = "/home/${var.elasticsearch_admin_user}/.ssh/authorized_keys"
+      path     = "/home/${var.elasticsearch_admin_user}/.ssh/authorized_keys"
       key_data = local.ssh_key
     }
   }

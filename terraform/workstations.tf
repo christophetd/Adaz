@@ -9,8 +9,8 @@ resource "azurerm_network_interface" "workstation" {
     name                          = "static"
     subnet_id                     = azurerm_subnet.workstations.id
     private_ip_address_allocation = "Static"
-    private_ip_address = cidrhost(var.workstations_subnet_cidr, 10+count.index)
-    public_ip_address_id = azurerm_public_ip.workstation[count.index].id
+    private_ip_address            = cidrhost(var.workstations_subnet_cidr, 10 + count.index)
+    public_ip_address_id          = azurerm_public_ip.workstation[count.index].id
   }
 }
 
@@ -22,7 +22,7 @@ resource "azurerm_network_interface_security_group_association" "workstation" {
 }
 resource "azurerm_virtual_machine" "workstation" {
   count = length(local.domain.workstations)
-  
+
   name                  = local.domain.workstations[count.index].name
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
@@ -42,8 +42,8 @@ resource "azurerm_virtual_machine" "workstation" {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "Windows-10"
     # gensecond: see https://docs.microsoft.com/en-us/azure/virtual-machines/windows/generation-2
-    sku       = "19h1-pron"
-    version   = "latest"
+    sku     = "19h1-pron"
+    version = "latest"
   }
   storage_os_disk {
     name              = "wks-${count.index}-os-disk"
@@ -57,11 +57,11 @@ resource "azurerm_virtual_machine" "workstation" {
     admin_password = local.domain.default_local_admin.password
   }
   os_profile_windows_config {
-      enable_automatic_upgrades = false
-      timezone = "Central European Standard Time"
-      winrm {
-        protocol = "HTTP"
-      }
+    enable_automatic_upgrades = false
+    timezone                  = "Central European Standard Time"
+    winrm {
+      protocol = "HTTP"
+    }
   }
 
   tags = {
@@ -73,14 +73,14 @@ resource "azurerm_virtual_machine" "workstation" {
 resource "null_resource" "provision_workstation_once_dc_has_been_created" {
   provisioner "local-exec" {
     working_dir = "${path.root}/../ansible"
-    command = "/bin/bash -c 'source venv/bin/activate && ansible-playbook workstations.yml -v'"
+    command     = "/bin/bash -c 'source venv/bin/activate && ansible-playbook workstations.yml -v'"
   }
 
   # Note: the dependance on 'azurerm_virtual_machine.workstation' applies to *all* resources created from this block
   # The provisioner will only be run once all workstations have been created (not once per workstation)
   # c.f. https://github.com/hashicorp/terraform/issues/15285
   depends_on = [
-    azurerm_virtual_machine.dc, 
-    azurerm_virtual_machine.workstation 
+    azurerm_virtual_machine.dc,
+    azurerm_virtual_machine.workstation
   ]
 }
