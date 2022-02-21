@@ -34,7 +34,6 @@
     domain_admin_password: "{{ domain.initial_domain_admin.password }}"
     safe_mode_password: "Toto123123tototototo"
     state: domain_controller
-    log_path: C:\Windows\Temp\promotion.txt
   register: dc_promotion
   tags: base
 

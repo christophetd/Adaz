@@ -1,5 +1,6 @@
 pywinrm==0.4.1
 requests==2.23.0
-msrest==0.6.13
+msrest==0.6.21
 msrestazure==0.6.4
-ansible==2.9.9
+ansible==5.3.0
+azure-cli==2.33.1
