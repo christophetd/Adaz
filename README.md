@@ -86,7 +86,7 @@ Here's an incomplete and biaised comparison with [DetectionLab](https://github.c
 
 - An Azure subscription. You can [create one for free](https://azure.microsoft.com/en-us/free/) and you get $200 of credits for the first 30 days. Note that this type of subscription has a limit of 4 vCPUs per region, which still allows you to run 1 domain controller and 2 workstations (with the default lab configuration).
 
-- A SSH key in `~/.ssh/id_rsa.pub`
+- A SSH key in `~/.ssh/id_rsa.pub`. Your private key must either be added to ssh-agent (typically, by running `ssh-add ~/.ssh/id_rsa` once and adding `eval "$(ssh-agent -s)"` in your `.bashrc`) or not encrypted with a passphrase.
 
 - [Terraform](https://www.terraform.io/downloads.html) >= 0.12
 
