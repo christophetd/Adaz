@@ -38,7 +38,7 @@ resource "azurerm_virtual_machine" "dc" {
     version   = "latest"
   }
   storage_os_disk {
-    name              = "os-disk"
+    name              = "dc-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
