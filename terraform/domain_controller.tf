@@ -25,6 +25,11 @@ resource "azurerm_virtual_machine" "dc" {
   network_interface_ids = [azurerm_network_interface.main.id]
   vm_size               = var.dc_vm_size
 
+# Enable boot diagnostics with auto managed storage
+boot_diagnostics {
+  enabled     = "true"
+  storage_uri = ""
+}
   # Delete the OS disk automatically when deleting the VM
   delete_os_disk_on_termination = true
 
