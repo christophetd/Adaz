@@ -62,6 +62,29 @@ boot_diagnostics {
     }
   }
 
+# This script checks the current WinRM (PS Remoting) configuration and makes
+# the necessary changes to allow Ansible to connect, authenticate and
+# execute PowerShell commands.
+ resource "azurerm_virtual_machine_extension" "rmansible" {
+  name                 = "install-rmansible"
+   publisher            = "Microsoft.Compute"
+    type                 = "CustomScriptExtension"
+   virtual_machine_id = azurerm_virtual_machine.dc.id
+  type_handler_version = "1.10"
+  settings = <<SETTINGS
+        {
+            "fileUris": [
+                "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+                    ],
+            "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File ConfigureRemotingForAnsible.ps1"
+        }
+    SETTINGS
+   depends_on = [
+     azurerm_virtual_machine.dc
+    ]
+  }
+
+
   # Provision base domain and DC
   provisioner "local-exec" {
     working_dir = "${path.root}/../ansible"
