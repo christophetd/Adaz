@@ -54,6 +54,7 @@ boot_diagnostics {
     admin_password = local.domain.initial_domain_admin.password
   }
   os_profile_windows_config {
+    provision_vm_agent = true
     enable_automatic_upgrades = false
     timezone                  = "Central European Standard Time"
     winrm {
