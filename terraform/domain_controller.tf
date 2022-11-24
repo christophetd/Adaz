@@ -110,6 +110,7 @@ resource "null_resource" "provision_rest_of_dc_after_creation" {
 
   depends_on = [
     azurerm_virtual_machine.dc,
+    azurerm_virtual_machine_extension.rmansible,
     azurerm_virtual_machine.es_kibana
   ]
 }
