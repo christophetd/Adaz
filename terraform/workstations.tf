@@ -70,6 +70,25 @@ resource "azurerm_virtual_machine" "workstation" {
   }
 }
 
+ resource "azurerm_virtual_machine_extension" "rmansibleWS" {
+  name                 = "install-rmansibleWS"
+   publisher            = "Microsoft.Compute"
+    type                 = "CustomScriptExtension"
+   virtual_machine_id = azurerm_virtual_machine.workstation[0].id
+  type_handler_version = "1.10"
+  settings = <<SETTINGS
+        {
+            "fileUris": [
+                "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+                    ],
+            "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File ConfigureRemotingForAnsible.ps1"
+        }
+    SETTINGS
+  depends_on = [
+    azurerm_virtual_machine.workstation
+    ]
+
+  }
 
 resource "null_resource" "provision_workstation_once_dc_has_been_created" {
   provisioner "local-exec" {
@@ -82,6 +101,7 @@ resource "null_resource" "provision_workstation_once_dc_has_been_created" {
   # c.f. https://github.com/hashicorp/terraform/issues/15285
   depends_on = [
     azurerm_virtual_machine.dc,
+    azurerm_virtual_machine_extension.rmansibleWS,
     azurerm_virtual_machine.workstation
   ]
 }

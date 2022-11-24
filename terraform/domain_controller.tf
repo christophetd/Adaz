@@ -65,8 +65,8 @@ boot_diagnostics {
 # This script checks the current WinRM (PS Remoting) configuration and makes
 # the necessary changes to allow Ansible to connect, authenticate and
 # execute PowerShell commands.
- resource "azurerm_virtual_machine_extension" "rmansible" {
-  name                 = "install-rmansible"
+ resource "azurerm_virtual_machine_extension" "rmansibleDC" {
+  name                 = "install-rmansibleDC"
    publisher            = "Microsoft.Compute"
     type                 = "CustomScriptExtension"
    virtual_machine_id = azurerm_virtual_machine.dc.id
@@ -110,7 +110,7 @@ resource "null_resource" "provision_rest_of_dc_after_creation" {
 
   depends_on = [
     azurerm_virtual_machine.dc,
-    azurerm_virtual_machine_extension.rmansible,
+    azurerm_virtual_machine_extension.rmansibleDC,
     azurerm_virtual_machine.es_kibana
   ]
 }
