@@ -84,28 +84,15 @@ boot_diagnostics {
     ]
   }
 
-
-  # Provision base domain and DC
-  provisioner "local-exec" {
-    working_dir = "${path.root}/../ansible"
-    command     = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --tags=common,base -v'"
-  }
-
-  provisioner "local-exec" {
-    working_dir = "${path.root}/../ansible"
-    command     = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --tags=common,init -v'"
-  }
-
-  tags = {
-    kind = "domain-controller"
-  }
-}
-
 # Provision rest of DC outside of the VM resource block to allow provisioning workstations concurrently
 resource "null_resource" "provision_rest_of_dc_after_creation" {
   provisioner "local-exec" {
     working_dir = "${path.root}/../ansible"
-    command     = "/bin/bash -c 'source venv/bin/activate && ansible-playbook domain-controllers.yml --skip-tags=base,init -v'"
+    command     =  "bash -c ../ansible/dc_config.sh"
+  }
+
+  tags = {
+    kind = "domain-controller"
   }
 
   depends_on = [
