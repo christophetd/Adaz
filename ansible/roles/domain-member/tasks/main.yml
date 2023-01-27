@@ -1,14 +1,18 @@
+- name: Include accounts
+  include_vars:
+    file:  ../../accdom.yml
+    name: accounts
+  tags: common
+
 - name: Include domain configuration file
   include_vars:
     file: ../ansible/domain-config.yml
     name: domain
   tags: common
 
-- name: Read credentials from domain configuration file
+- name: set domain controller IP
   set_fact:
     domain_controller_ips: "{{ lookup('flattened', groups['domain_controllers'] | map('extract', hostvars, ['private_ipv4_addresses']) | list) }}"
-    ansible_user: "{{ domain.default_local_admin.username }}"
-    ansible_password: "{{ domain.default_local_admin.password }}"
   tags: common
 
 # Needs to be performed after the set_fact block which sets up the remote user and password to use
@@ -25,8 +29,8 @@
   win_domain_membership:
     dns_domain_name: "{{ domain.dns_name }}"
     hostname: "{{ ansible_env.COMPUTERNAME }}"
-    domain_admin_user: "{{ domain.initial_domain_admin.username }}@{{ domain.dns_name }}"
-    domain_admin_password: "{{ domain.initial_domain_admin.password }}"
+    domain_admin_user: "{{ accounts.initial_domain_admin.username }}@{{ domain.dns_name }}"
+    domain_admin_password: "{{ accounts.initial_domain_admin.password }}"
     state: domain
   register: domain_state
 
@@ -37,7 +41,7 @@
 - name: Ensure domain users can RDP on any workstation
   win_group_membership:
     name: Remote Desktop Users
-    members: "{{ domain.users | map(attribute='username') | list }}"
+    members: "{{ accounts.domusers | map(attribute='username') | list }}"
   # Note: currently, local users cannot be set as local admins from the YAML configuration
 
 - name: Read local users list from domain configuration file

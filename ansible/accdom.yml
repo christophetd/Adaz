@@ -6,7 +6,7 @@ initial_domain_admin:
 organizational_units: {}
 
 # Domain users - by default, password := username
-users:
+domusers:
 - username: christophe
 - username: brent
 - username: dany

@@ -1,4 +1,10 @@
 ---
+- name: Include accounts
+  include_vars:
+    file:  ../../accdom.yml
+    name: accounts
+  tags: base
+
 - name: Ensure necessary Microsoft features are installed
   win_feature:
     name: "{{ item }}"
@@ -13,7 +19,7 @@
 - name: Ensure domain is created
   win_domain:
     dns_domain_name: "{{ domain.dns_name }}"
-    safe_mode_password: "{{ domain.dcsafemode.password }}"
+    safe_mode_password: "{{ accounts.dcsafemode.password }}"
   register: domain_creation
   tags: base
 
@@ -25,9 +31,9 @@
 - name: Ensure domain controllers are promoted
   win_domain_controller:
     dns_domain_name: "{{ domain.dns_name }}"
-    domain_admin_user: "{{ domain.initial_domain_admin.username }}@{{ domain.dns_name }}"
-    domain_admin_password: "{{ domain.initial_domain_admin.password }}"
-    safe_mode_password: "{{ domain.dcsafemode.password }}"
+    domain_admin_user: "{{ accounts.initial_domain_admin.username }}@{{ domain.dns_name }}"
+    domain_admin_password: "{{ accounts.initial_domain_admin.password }}"
+    safe_mode_password: "{{ accounts.dcsafemode.password }}"
     state: domain_controller
   register: dc_promotion
   tags: base
