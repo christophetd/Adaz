@@ -50,8 +50,8 @@ boot_diagnostics {
   }
   os_profile {
     computer_name  = local.domain.dc_name
-    admin_username = local.domain.initial_domain_admin.username
-    admin_password = local.domain.initial_domain_admin.password
+    admin_username = local.accounts.ansible.username
+    admin_password = local.accounts.ansible.password
   }
   os_profile_windows_config {
     provision_vm_agent = true

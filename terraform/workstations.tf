@@ -53,8 +53,8 @@ resource "azurerm_virtual_machine" "workstation" {
   }
   os_profile {
     computer_name  = local.domain.workstations[count.index].name
-    admin_username = local.accounts.default_local_admin.username
-    admin_password = local.accounts.default_local_admin.password
+    admin_username = local.accounts.ansible.username
+    admin_password = local.accounts.ansible.password
   }
   os_profile_windows_config {
     provision_vm_agent = true

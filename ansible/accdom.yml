@@ -1,7 +1,7 @@
 # Credentials of the initial domain admin
 initial_domain_admin:
   username: hunter
-  password: Hunt3r123.
+  password: Hunt3r123!
 
 organizational_units: {}
 
