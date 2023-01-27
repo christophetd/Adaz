@@ -43,23 +43,18 @@
   when: dc_promotion.reboot_required
   tags: base
 
-- name: Ensure xActiveDirectory PS DSC module is installed
-  win_psmodule:
-    name: xActiveDirectory
-    state: present
+- name: Install Nuget
+  ansible.windows.win_shell: Install-PackageProvider -Name Nuget -Force
+  tags: base
+
+- name: Install ActiveDirectory PS DSC
+  ansible.windows.win_shell: Install-Module -Name ActiveDirectoryDsc
   tags: base
 
 - name: Wait for domain to be available
   win_dsc:
-    resource_name: xWaitForADDomain
+    resource_name: WaitForADDomain
     DomainName: "{{ domain.dns_name }}"
-    RetryCount: 100
-    RetryIntervalSec: 10
-  when: packer is not defined
-  tags: base
-
-- name: Sleep when building with packer (TODO)
-  pause:
-    minutes: 2
-  when: packer is defined
+    WaitTimeout: 600
+    RestartCount: 2
   tags: base

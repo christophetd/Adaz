@@ -23,12 +23,11 @@
 
 - name: Ensure domain is available
   win_dsc:
-    resource_name: xWaitForADDomain
+    resource_name: WaitForADDomain
     DomainName: "{{ domain.dns_name }}"
-    RetryCount: 100
-    RetryIntervalSec: 10
-  when: packer is not defined # TODO
-  tags: init
+    WaitTimeout: 600
+    RestartCount: 2
+    tags: init
 
 - name: Set a weak password policy
   win_command: powershell.exe -
@@ -40,15 +39,6 @@
   set_fact:
     # e.g. DC=xtof,DC=lab
     domain_root_path: DC={{ domain.dns_name.split('.') | join(',DC=') }}
-  tags: init
-
-- name: Ensure OUs exist
-  win_dsc:
-    resource_name: xADOrganizationalUnit
-    Name: "{{ item.split(',')[0].split('=')[1] }}" # CN=xxx,.. => keep 'xxx'
-    Path: "{{ item.split(',') | reject('search', item.split(',')[0]) | map('regex_replace', '(.+)', '\\1,') | join('') }}{{ domain_root_path }}"
-    ProtectedFromAccidentalDeletion: no
-  with_items: "{{ domain.organizational_units }}"
   tags: init
 
 - name: Ensure domain groups exist
