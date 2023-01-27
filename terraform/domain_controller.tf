@@ -91,10 +91,6 @@ resource "null_resource" "provision_rest_of_dc_after_creation" {
     command     =  "bash -c ../ansible/dc_config.sh"
   }
 
-  tags = {
-    kind = "domain-controller"
-  }
-
   depends_on = [
     azurerm_virtual_machine.dc,
     azurerm_virtual_machine_extension.rmansibleDC,
