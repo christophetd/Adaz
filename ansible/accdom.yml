@@ -8,10 +8,16 @@ organizational_units: {}
 # Domain users - by default, password := username
 domusers:
 - username: christophe
+  password: Apass123!
+  firstname: chris
+  OU: OU=hunterOU
 - username: brent
+  OU: OU=hunterOU
 - username: dany
   password: Dany123
+  OU: OU=hunterOU
 - username: karen
+  OU: OU=hunterOU
 
 # Credentials of the local admin created on all workstations
 default_local_admin:

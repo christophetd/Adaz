@@ -41,6 +41,21 @@
     domain_root_path: DC={{ domain.dns_name.split('.') | join(',DC=') }}
   tags: init
 
+- name: Set UPN domain (e.g. lab.local)
+  set_fact:
+    # e.g. lab.local
+    domain_upn_path: "{{ domain.dns_name }}"
+  tags: init
+
+- name: Ensure OU is present & protected
+  community.windows.win_domain_ou:
+   name: "{{ item.name }}"
+   path: "{{ domain_dn }}"
+   state: present
+   protected: true
+  with_items: "{{ domain.orgunits }}"
+  tags: init
+
 - name: Ensure domain groups exist
   win_domain_group:
     name: "{{ item.dn.split(',')[0].split('=')[1] }}"
@@ -54,8 +69,12 @@
   win_domain_user:
     name: "{{ item.username }}"
     password: "{{ item.password | default(item.username) }}"
+    firstname: "{{ item.firstname | default(item.username) }}"
+    upn: "{{ item.username + '@' + domain_upn_path }}"
+    description: "user created by ansible"
     path: "{{ item.OU | default('CN=Users') }},{{ domain_root_path }}"
     enabled: yes
+    state: present
   with_items: "{{ accounts.domusers }}"
   tags: init
 

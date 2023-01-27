@@ -4,6 +4,11 @@ dns_name: hunter.lab
 # Hostname of the domain controller
 dc_name: DC-1
 
+#organizational_units: {CN=Test}
+orgunits:
+  - name: HunterOU
+    description: Hunter OU
+
 # Domain groups
 groups:
 - dn: CN=Hunters,CN=Users
