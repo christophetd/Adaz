@@ -9,16 +9,11 @@
   - RSAT-AD-AdminCenter
   - RSAT-ADDS-Tools
   tags: base
- 
-- name: Generate random s afe mode password TODO
-  set_fact:
-    #safe_mode_password: "{{ lookup('password', 'safe_mode_password.txt length=32') }}"
-    safe_mode_password: testesttww111.
 
 - name: Ensure domain is created
   win_domain:
     dns_domain_name: "{{ domain.dns_name }}"
-    safe_mode_password: "Toto123123tototototo"
+    safe_mode_password: "{{ domain.dcsafemode.password }}"
   register: domain_creation
   tags: base
 
@@ -32,7 +27,7 @@
     dns_domain_name: "{{ domain.dns_name }}"
     domain_admin_user: "{{ domain.initial_domain_admin.username }}@{{ domain.dns_name }}"
     domain_admin_password: "{{ domain.initial_domain_admin.password }}"
-    safe_mode_password: "Toto123123tototototo"
+    safe_mode_password: "{{ domain.dcsafemode.password }}"
     state: domain_controller
   register: dc_promotion
   tags: base

@@ -1,7 +1,7 @@
 ---
 - name: Include domain configuration file
   include_vars:
-    file: ../../../domain.yml
+    file: ../../accdom.yml
     name: domain
   tags: common
 

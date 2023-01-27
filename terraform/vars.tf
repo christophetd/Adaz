@@ -3,6 +3,11 @@ variable "domain_config_file" {
   default     = "../domain.yml"
 }
 
+variable "accounts_config_file" {
+  description = "Path to the domain configuration file"
+  default     = "../ansible/accansible.yml"
+}
+
 variable "servers_subnet_cidr" {
   description = "CIDR to use for the Servers subnet"
   default     = "10.0.10.0/24"
