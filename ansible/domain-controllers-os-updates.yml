@@ -3,18 +3,22 @@
   hosts: domain_controllers
   gather_facts: no
   tasks:
-  - name: Include domain configuration file
-    include_vars:
-      file: ../ansible/domain-config.yml
-      name: domain
-  - name: Read credentials from domain configuration file
-    set_fact:
-      ansible_user: "{{ domain.initial_domain_admin.username }}"
-      ansible_password: "{{ domain.initial_domain_admin.password }}"
-  - name: Apply Windows updates
-    win_updates:
-      reboot: yes # reboot if necessary after updates
-      category_names:
-      - CriticalUpdates
-      - SecurityUpdates
-      - UpdateRollups
+    - name: Include accounts
+      include_vars:
+        file: ./accdom.yml
+        name: accounts
+    - name: Include domain configuration file
+      include_vars:
+        file: ./domain-config.yml
+        name: domain
+    - name: Read credentials from domain configuration file
+      set_fact:
+        ansible_user: "{{ accounts.initial_domain_admin.username }}"
+        ansible_password: "{{ accounts.initial_domain_admin.password }}"
+    - name: Apply Windows updates
+      win_updates:
+        reboot: yes # reboot if necessary after updates
+        category_names:
+        - CriticalUpdates
+        - SecurityUpdates
+        - UpdateRollups

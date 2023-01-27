@@ -1,7 +1,7 @@
 ---
 - name: Include accounts
   include_vars:
-    file:  ../../accdom.yml
+    file: ../../accdom.yml
     name: accounts
   tags: common
 

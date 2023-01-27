@@ -1,12 +1,12 @@
 - name: Include accounts
   include_vars:
-    file:  ../../accdom.yml
+    file: ../../accdom.yml
     name: accounts
   tags: common
 
 - name: Include domain configuration file
   include_vars:
-    file: ../ansible/domain-config.yml
+    file: ../../domain-config.yml
     name: domain
   tags: common
 
