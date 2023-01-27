@@ -5,7 +5,7 @@
   tasks:
   - name: Include domain configuration file
     include_vars:
-      file: ../domain.yml
+      file: ../ansible/domain-config.yml
       name: domain
   - name: Read credentials from domain configuration file
     set_fact:

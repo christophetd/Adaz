@@ -1,6 +1,6 @@
 variable "domain_config_file" {
   description = "Path to the domain configuration file"
-  default     = "../domain.yml"
+  default     = "../ansible/domain-config.yml"
 }
 
 variable "accounts_config_file" {

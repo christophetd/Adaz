@@ -97,3 +97,4 @@ resource "null_resource" "provision_rest_of_dc_after_creation" {
     azurerm_virtual_machine.es_kibana
   ]
 }
+}
