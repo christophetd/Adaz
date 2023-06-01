@@ -171,6 +171,13 @@ terraform apply -var 'region=East US 2'
 - [Project structure and directory organization](./doc/structure.md)
 - [Terraform variables available](./terraform/vars.tf)
 
+### Community
+
+Talks / posts referencing Adaz:
+
+- [Purple Teaming Cloud Identity: Simulation Labs for Red and Blue Teams](https://www.youtube.com/watch?v=xEn93_0jerk)
+
+
 ### Roadmap
 
 I will heavily rely on the number of thumbs up votes you will leave on [`feature-proposal` issues](https://github.com/christophetd/adaz/issues?q=is%3Aissue+is%3Aopen+label%3Afeature-proposal+sort%3Areactions-%2B1-desc) for the next features!
