@@ -176,7 +176,7 @@ terraform apply -var 'region=East US 2'
 Talks / posts referencing Adaz:
 
 - [Purple Teaming Cloud Identity: Simulation Labs for Red and Blue Teams](https://www.youtube.com/watch?v=xEn93_0jerk)
-
+- [(French) HoneyWISE : stratégie d’exploitation d’honeytokens en environnement Active Directory](https://www.cesar-conference.org/wp-content/uploads/2020/12/CESAR2020_070_A-TOURNYOL-du-CLOS_HoneyWISE_v3.pdf)
 
 ### Roadmap
 
