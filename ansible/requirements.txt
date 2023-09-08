@@ -1,4 +1,4 @@
-pywinrm==0.4.1
+pywinrm==0.4.3
 requests==2.23.0
 msrest==0.6.21
 msrestazure==0.6.4
