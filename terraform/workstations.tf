@@ -42,7 +42,7 @@ resource "azurerm_virtual_machine" "workstation" {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "Windows-10"
     # gensecond: see https://docs.microsoft.com/en-us/azure/virtual-machines/windows/generation-2
-    sku     = "19h1-pron"
+    sku     = "win10-22h2-pron"
     version = "latest"
   }
   storage_os_disk {
