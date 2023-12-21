@@ -43,5 +43,5 @@ variable "dc_vm_size" {
 
 variable "workstations_vm_size" {
   description = "Size of the workstations VMs. See https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs"
-  default     = "Standard_D1_v2"
+  default     = "Standard_DS1_v2"
 }
