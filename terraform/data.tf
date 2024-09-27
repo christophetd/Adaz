@@ -12,12 +12,6 @@ data "azurerm_public_ip" "workstation" {
   depends_on          = [azurerm_public_ip.workstation]
 }
 
-data "azurerm_public_ip" "elasticsearch" {
-  name                = azurerm_public_ip.elasticsearch.name
-  resource_group_name = var.resource_group
-  depends_on          = [azurerm_public_ip.elasticsearch]
-}
-
 data "http" "public_ip" {
   url = "http://ipv4.icanhazip.com"
 }

@@ -1,6 +1,6 @@
 - name: Include accounts
   include_vars:
-    file: ../../accdom.yml
+    file:  ../../accdom.yml
     name: accounts
   tags: common
 
@@ -13,6 +13,8 @@
 - name: set domain controller IP
   set_fact:
     domain_controller_ips: "{{ lookup('flattened', groups['domain_controllers'] | map('extract', hostvars, ['private_ipv4_addresses']) | list) }}"
+#    ansible_user: "{{ accounts.localadmin.username }}"
+#   ansible_password: "{{ accounts.localadmin.password }}"
   tags: common
 
 # Needs to be performed after the set_fact block which sets up the remote user and password to use
@@ -29,8 +31,8 @@
   win_domain_membership:
     dns_domain_name: "{{ domain.dns_name }}"
     hostname: "{{ ansible_env.COMPUTERNAME }}"
-    domain_admin_user: "{{ accounts.initial_domain_admin.username }}@{{ domain.dns_name }}"
-    domain_admin_password: "{{ accounts.initial_domain_admin.password }}"
+    domain_admin_user: "{{ accounts.domadmin.username }}@{{ domain.dns_name }}"
+    domain_admin_password: "{{ accounts.domadmin.password }}"
     state: domain
   register: domain_state
 

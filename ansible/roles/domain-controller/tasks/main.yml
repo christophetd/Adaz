@@ -1,7 +1,7 @@
 ---
 - name: Include accounts
   include_vars:
-    file: ../../accdom.yml
+    file:  ../../accdom.yml
     name: accounts
   tags: common
 
@@ -11,12 +11,12 @@
     name: domain
   tags: common
 
-- name: Read credentials from domain configuration file
-  set_fact:
-    ansible_user: "{{ accounts.initial_domain_admin.username }}"
-    ansible_password: "{{ accounts.initial_domain_admin.password }}"
-  when: "packer is not defined"
-  tags: common
+  
+#- name: Read ansible user from accounts
+#  set_fact:
+#    ansible_user: "{{ accounts.domadmin.username }}"
+#    ansible_password: "{{ accounts.domadmin.password }}"
+#    tags: common
 
 - include_tasks: base.yml
   tags: base
@@ -29,10 +29,60 @@
     RestartCount: 2
     tags: init
 
+- name: disable windows defenderAS
+  win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender" -ValueName "DisableAntiSpyware" -Type DWord -Value 1'
+  tags: init
+
+
+- name: disable windows defenderAV
+  win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender" -ValueName "DisableAntiVirus" -Type DWord -Value 1'
+  tags: init
+
+
+- name: disable windows defenderRA
+  win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender" -ValueName "DisableRoutinelyTakingAction" -Type DWord -Value 1'
+  tags: init
+
+- name: disable windows defenderRTM
+  win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection" -ValueName "DisableRealtimeMonitoring" -Type DWord -Value 1'
+  tags: init
+
+- name: disable windows defenderBHM
+  win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection" -ValueName "DisableBehaviorMonitoring" -Type DWord -Value 1'
+  tags: init
+
+- name: disable windows defenderOAP
+  win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection" -ValueName "DisableOnAccessProtection" -Type DWord -Value 1'
+  tags: init
+
+- name: disable windows defenderSRT
+  win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection" -ValueName "DisableScanOnRealtimeEnable" -Type DWord -Value 1'
+  tags: init
+
+
 - name: Set a weak password policy
   win_command: powershell.exe -
   args:
-    stdin: "Set-ADDefaultDomainPasswordPolicy -MinPasswordLength 1 -ComplexityEnabled $False -Identity {{ domain.dns_name }}"
+    stdin: 'Set-ADDefaultDomainPasswordPolicy -MinPasswordLength 1 -ComplexityEnabled $False -Identity {{ domain.dns_name }}'
+  tags: init
+
+- name: set domain dn
+  set_fact:
+    domain_dn: "DC={{ domain.dns_name.split('.') | join(',DC=') }}"
   tags: init
 
 - name: Set domain root path (e.g. DC=xtof,DC=lab)
@@ -47,6 +97,11 @@
     domain_upn_path: "{{ domain.dns_name }}"
   tags: init
 
+#- name: install dsc module
+  #win_command: powershell.exe -
+  #args:
+    #stdin: 'Import-DscResource -ModuleName ActiveDirectoryDsc'
+  #tags: init
 - name: Ensure OU is present & protected
   community.windows.win_domain_ou:
    name: "{{ item.name }}"
@@ -55,6 +110,19 @@
    protected: true
   with_items: "{{ domain.orgunits }}"
   tags: init
+
+#- name: Add OUs
+#  win_dsc:
+#    resource_name: ADOrganizationalUnit
+#    Name: "{{ item.name }}"
+#    Path: 
+    #Name: "{{ item.split(',')[0].split('=')[1] }}" # CN=xxx,.. => keep 'xxx'
+    #Path: "{{ item.split(',') | reject('search', item.split(',')[0]) | map('regex_replace', '(.+)', '\\1,') | join('') }}{{ domain_root_path }}"
+#    ProtectedFromAccidentalDeletion: no
+#    Description: "{{ item.description }}"
+#    Ensure: present
+#  with_items: "{{ domain.orgunits }}"
+#  tags: init
 
 - name: Ensure domain groups exist
   win_domain_group:

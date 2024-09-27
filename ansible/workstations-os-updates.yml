@@ -3,18 +3,18 @@
   hosts: workstations
   gather_facts: no
   tasks:
-  - name: Include accounts
+    - name: Include accounts
     include_vars:
-     file: ./accdom.yml
-     name: accounts
+      file:  ./accdom.yml
+      name: accounts
   - name: Include domain configuration file
     include_vars:
       file: ./domain-config.yml
       name: domain
-  - name: Read credentials from domain configuration file
+  - name: Read credentials from accounts
     set_fact:
-      ansible_user: "{{ accounts.default_local_admin.username }}"
-      ansible_password: "{{ accounts.default_local_admin.password }}"
+      ansible_user: "{{ accounts.localadmin.username }}"
+      ansible_password: "{{ accounts.localadmin.password }}"
   - name: Apply Windows updates
     win_updates:
       reboot: yes # reboot if necessary after updates

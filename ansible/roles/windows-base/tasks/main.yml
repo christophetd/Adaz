@@ -5,7 +5,7 @@
 
 - name: Hide ugly Windows 10 taskbar
   win_regedit:
-    path: HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search
+    path: HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search   
     name: SearchboxTaskbarMode
     data: "0"
     type: dword

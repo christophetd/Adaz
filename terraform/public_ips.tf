@@ -15,10 +15,3 @@ resource "azurerm_public_ip" "workstation" {
   idle_timeout_in_minutes = 30
 }
 
-resource "azurerm_public_ip" "elasticsearch" {
-  name                    = "elasticsearch-ingress"
-  location                = azurerm_resource_group.main.location
-  resource_group_name     = azurerm_resource_group.main.name
-  allocation_method       = "Static"
-  idle_timeout_in_minutes = 30
-}

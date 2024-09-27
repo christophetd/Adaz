@@ -1,25 +1,35 @@
 # FQDN of your domain
-dns_name: hunter.lab
+dns_name: domtest.lab
 
 # Hostname of the domain controller
 dc_name: DC-1
 
+# Credentials of the initial domain admin
+# moved to accounts yml
+  
 #organizational_units: {CN=Test}
+
 orgunits:
-  - name: HunterOU
-    description: Hunter OU
+  - name: TestOU
+    description: Test OU
+
+# Domain users - by default, password := username
+# moved to accounts yml
 
 # Domain groups
 groups:
-- dn: CN=Hunters,CN=Users
-  members: [christophe, dany]
+- dn: CN=testgroup,CN=Users
+  members: [userB, userC]
+
+# Credentials of the local admin created on all workstations
+# moved to accounts yml
 
 # Workstations to create and to domain-join
 workstations:
-- name: XTOF-WKS
-  local_admins: [christophe]
-- name: DANY-WKS
-  local_admins: [dany]
+- name: XT1-WKS
+  local_admins: [userB]
+- name: XT2-WKS
+  local_admins: [userC]
 
 # Should the Windows firewall be enabled?
 enable_windows_firewall: no

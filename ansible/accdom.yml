@@ -1,28 +1,25 @@
-# Credentials of the initial domain admin
-initial_domain_admin:
-  username: hunter
-  password: Hunt3r123!
-
-organizational_units: {}
-
-# Domain users - by default, password := username
 domusers:
-- username: christophe
-  password: Apass123!
-  firstname: chris
-  OU: OU=hunterOU
-- username: brent
-  OU: OU=hunterOU
-- username: dany
-  password: Dany123
-  OU: OU=hunterOU
-- username: karen
-  OU: OU=hunterOU
+- username: userA
+  password: Aperson!
+  firstname: A
+  OU: OU=TestOU
+- username: userB
+  password: Bperson!
+  firstname: B
+  OU: OU=TestOU
+- username: userC
+  password: Cperson!
+  firstname: C
+  OU: OU=TestOU
+- username: userD
+  password: Dperson!
+  firstname: D
+  OU: OU=TestOU
 
-# Credentials of the local admin created on all workstations
-default_local_admin:
-  username: localadmin
-  password: Localadmin!
+domadmin:
+  username: master
+  password: RandomString24681!
 
-dcsafemode:
-  password: Toto123123tototototo
+domrestore:
+  password: Toto123123todtfgsasad! 
+

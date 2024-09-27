@@ -1,0 +1,1 @@
+bash -c 'source ../ansible/venv/bin/activate && pip install -r ../ansible/requirements.txt'

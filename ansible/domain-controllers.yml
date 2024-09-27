@@ -1,6 +1,9 @@
 ---
 - name: Configure domain controllers
   hosts: domain_controllers
+  vars_files: 
+   - accansible.yml
+
   gather_facts: no
   roles:
   - role: domain-controller
@@ -11,5 +14,8 @@
     tags: [ sysmon ]
   - role: logging-base
     tags: [ logging-base ]
-  - role: winlogbeat
-    tags: [ winlogbeat ]
+
+  vars:
+    ansible_user: "{{ ansible.username }}"
+    ansible_password: "{{ ansible.password }}"
+    
