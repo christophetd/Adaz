@@ -1,1 +1,0 @@
-terraform init -upgrade
