@@ -2,7 +2,7 @@
 - name: Configure domain controllers
   hosts: domain_controllers
   vars_files: 
-   - accansible.yml
+   - account_ansible.yml
 
   gather_facts: no
   roles:

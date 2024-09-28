@@ -1,4 +1,0 @@
-- wait_for_connection: {} # Note: this is needed because Terraform considers the VM is ready before it's fully booted and SSH is reachable
-- include_tasks: elasticsearch.yml
-- meta: flush_handlers
-- include_tasks: kibana.yml

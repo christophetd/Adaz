@@ -5,7 +5,7 @@
   tasks:
     - name: Include accounts
     include_vars:
-      file:  ./accdom.yml
+      file:  ./account_domain.yml
       name: accounts
   - name: Include domain configuration file
     include_vars:
@@ -16,7 +16,7 @@
       ansible_user: "{{ accounts.localadmin.username }}"
       ansible_password: "{{ accounts.localadmin.password }}"
   - name: Apply Windows updates
-    win_updates:
+    ansible.windows.win_updates:
       reboot: yes # reboot if necessary after updates
       category_names:
       - CriticalUpdates

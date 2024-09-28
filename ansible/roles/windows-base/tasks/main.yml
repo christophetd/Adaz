@@ -4,7 +4,7 @@
     dest: Desktop\Powershell.lnk
 
 - name: Hide ugly Windows 10 taskbar
-  win_regedit:
+  ansible.windows.win_regedit:
     path: HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search   
     name: SearchboxTaskbarMode
     data: "0"

@@ -62,7 +62,7 @@ resource "azurerm_virtual_machine" "dc" {
 
 }
 
-  resource "azurerm_virtual_machine_extension" "domsoft" {
+resource "azurerm_virtual_machine_extension" "domsoft" {
   name                 = "install-domsoft"
    publisher            = "Microsoft.Compute"
     type                 = "CustomScriptExtension"
@@ -70,8 +70,8 @@ resource "azurerm_virtual_machine" "dc" {
   type_handler_version = "1.10"
   settings = <<SETTINGS
         {
-            "fileUris": [
-                "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+              "fileUris": [
+                "https://raw.githubusercontent.com/ansible/ansible-documentation/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
                     ],
             "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File ConfigureRemotingForAnsible.ps1"
         }
@@ -81,11 +81,13 @@ resource "azurerm_virtual_machine" "dc" {
     ]
   }
 
+
+
 # Provision rest of DC outside of the VM resource block to allow provisioning workstations concurrently
 resource "null_resource" "dc_provision" {
   provisioner "local-exec" {
     working_dir = "${path.root}/../ansible"
-    command     =  "bash -c ../ansible/dc_config.sh"
+    command     =  "bash -c 'source ~/Adaz/ansible/venv/bin/activate && ansible-playbook ~/Adaz/ansible/domain-controllers.yml --tags=common,init -v'"
   }
 
    depends_on = [

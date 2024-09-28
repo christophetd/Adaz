@@ -14,4 +14,3 @@ resource "azurerm_public_ip" "workstation" {
   allocation_method       = "Static"
   idle_timeout_in_minutes = 30
 }
-

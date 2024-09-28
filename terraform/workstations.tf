@@ -76,20 +76,20 @@ resource "azurerm_virtual_machine" "workstation" {
   }
 }
 
-  resource "azurerm_virtual_machine_extension" "worksoft1" {
+ resource "azurerm_virtual_machine_extension" "worksoft1" {
   name                 = "install-worksoft1"
    publisher            = "Microsoft.Compute"
     type                 = "CustomScriptExtension"
    virtual_machine_id = azurerm_virtual_machine.workstation[0].id
   type_handler_version = "1.10"
   settings = <<SETTINGS
-        {
-            "fileUris": [
-                "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+           {
+              "fileUris": [
+                "https://raw.githubusercontent.com/ansible/ansible-documentation/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
                     ],
             "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File ConfigureRemotingForAnsible.ps1"
         }
-    SETTINGS
+ SETTINGS
   depends_on = [
     azurerm_virtual_machine.workstation
     ]
@@ -104,8 +104,8 @@ resource "azurerm_virtual_machine" "workstation" {
   type_handler_version = "1.10"
   settings = <<SETTINGS
         {
-            "fileUris": [
-                "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+              "fileUris": [
+                "https://raw.githubusercontent.com/ansible/ansible-documentation/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
                     ],
             "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File ConfigureRemotingForAnsible.ps1"
         }
@@ -116,11 +116,10 @@ resource "azurerm_virtual_machine" "workstation" {
 
   }
 
-
-resource "null_resource" "workstation_provision" {
+  resource "null_resource" "workstation_provision" {
   provisioner "local-exec" {
-    working_dir = "../ansible"
-    command     = "bash -c 'source ../ansible/venv/bin/activate && ansible-playbook ../ansible/workstations.yml -v'"
+    working_dir = "${path.root}/../ansible"
+    command     =  "bash -c 'source ~/Adaz/ansible/venv/bin/activate && ansible-playbook ~/Adaz/ansible/workstations.yml -v'"
   }
 
   # Note: the dependance on 'azurerm_virtual_machine.workstation' applies to *all* resources created from this block

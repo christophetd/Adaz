@@ -5,22 +5,17 @@ variable "domain_config_file" {
 
 variable "accounts_config_file" {
   description = "Path to the domain configuration file"
-  default     = "../ansible/accansible.yml"
+  default     = "../ansible/account_ansible.yml"
 }
 
 variable "servers_subnet_cidr" {
   description = "CIDR to use for the Servers subnet"
-  default     = "10.0.10.0/24"
+  default     = "10.0.4.0/24"
 }
 
 variable "workstations_subnet_cidr" {
   description = "CIDR to use for the Workstations subnet"
-  default     = "10.0.11.0/24"
-}
-
-variable "ssh_key" {
-  description = "Path to SSH key to add to the Elasticsearch / Kibana instance"
-  default     = "~/.ssh/id_rsa.pub"
+  default     = "10.0.5.0/24"
 }
 
 variable "region" {
@@ -36,10 +31,10 @@ variable "resource_group" {
 
 variable "dc_vm_size" {
   description = "Size of the Domain Controller VM. See https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs"
-  default     = "Standard_D4as_v5"
+  default     = "Standard_D2s_v3"
 }
 
 variable "workstations_vm_size" {
   description = "Size of the workstations VMs. See https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs"
-  default     = "Standard_D4as_v5"
+  default     = "Standard_D2s_v3"
 }

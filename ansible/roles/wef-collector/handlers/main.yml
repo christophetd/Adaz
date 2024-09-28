@@ -1,4 +1,4 @@
 - name: restart wec service
-  win_service:
+  ansible.windows.win_service:
     name: Wecsvc
     state: restarted

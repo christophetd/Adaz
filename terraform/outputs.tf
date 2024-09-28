@@ -20,9 +20,8 @@ cmdkey /generic:"${azurerm_public_ip.workstation[0].ip_address}" /user:"${local.
 mstsc /v:${azurerm_public_ip.workstation[0].ip_address} 
 cmdkey /delete:${azurerm_public_ip.workstation[0].ip_address}
 
+
 EOF
 }
 
-output "workstations_public_ips" {
-  value = zipmap(azurerm_virtual_machine.workstation.*.name, azurerm_public_ip.workstation.*.ip_address)
-}
+

@@ -2,7 +2,7 @@
 - name: Configure workstations
   hosts: workstations
   vars_files: 
-   - accansible.yml
+   - account_ansible.yml
   gather_facts: no
   roles:
   - domain-member
