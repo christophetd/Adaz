@@ -1,16 +1,16 @@
 - name: Ensure Network Service is part of the Event Logs Readers local group
-  win_group_membership:
+  ansible.windows.win_group_membership:
     name: Event Log Readers
     members: Network Service
 
 - name: Enable process tracking
-  win_regedit:
+  ansible.windows.win_regedit:
     path: HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit
     name: ProcessCreationIncludeCmdLine_Enabled
     value: 1
 
 - name: Set audit policies
-  win_audit_policy_system:
+  community.windows.win_audit_policy_system:
     category: "{{ item }}"
     audit_type: success, failure
   with_items:
@@ -24,7 +24,7 @@
 
 # https://support.microsoft.com/en-us/help/4047777/security-event-log-forwarding-fails-with-error-0x138c-and-5004
 - name: Set custom security descriptor on event logs
-  win_regedit:
+  ansible.windows.win_regedit:
     path: "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\EventLog\\{{ item }}"
     name: CustomSD
     data: "O:BAG:SYD:(D;; 0xf0007;;;AN)(D;; 0xf0007;;;BG)(A;; 0xf0007;;;SY)(A;; 0x7;;;BA)(A;; 0x7;;;SO)(A;; 0x3;;;IU)(A;; 0x2;;;BA)(A;; 0x2;;;LS)(A;; 0x2;;;NS)(A;; 0x7;;;DA)(A;; 0x1;;;S-1-5-21-xxx-xxx-xxx-xxx)"

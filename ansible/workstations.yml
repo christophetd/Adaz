@@ -1,6 +1,8 @@
 ---
 - name: Configure workstations
   hosts: workstations
+  vars_files: 
+   - account_ansible.yml
   gather_facts: no
   roles:
   - domain-member
@@ -8,3 +10,6 @@
   - wef-client
   - sysmon
   - logging-base
+  vars:
+    ansible_user: "{{ ansible.username }}"
+    ansible_password: "{{ ansible.password }}"

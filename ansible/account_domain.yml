@@ -1,0 +1,25 @@
+domusers:
+- username: userA
+  password: Aperson!
+  firstname: A
+  OU: OU=TestOU
+- username: userB
+  password: Bperson!
+  firstname: B
+  OU: OU=TestOU
+- username: userC
+  password: Cperson!
+  firstname: C
+  OU: OU=TestOU
+- username: userD
+  password: Dperson!
+  firstname: D
+  OU: OU=TestOU
+
+domadmin:
+  username: master
+  password: RandomString78954321!
+
+domrestore:
+  password: DomainRestore78954321!
+

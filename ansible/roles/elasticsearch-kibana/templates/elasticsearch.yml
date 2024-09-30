@@ -1,8 +1,0 @@
-node.name: elasticsearch
-
-path.data: /var/lib/elasticsearch
-path.logs: /var/log/elasticsearch
-network.host: [127.0.0.1, {{ hostvars[groups['elasticsearch'][0]].private_ipv4_addresses[0] }}] # Listen both on localhost and on private IP
-http.port: 9200
-
-cluster.initial_master_nodes: ["elasticsearch"]
