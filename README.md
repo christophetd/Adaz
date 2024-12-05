@@ -1,6 +1,6 @@
 # Adaz: Active Directory Hunting Lab in Azure
 
-![](https://badgen.net/badge/icon/azure?icon=azure&label=platform) [![Maintained](https://img.shields.io/badge/maintained-Yes%20as%20of%20December%202023-green.svg)](https://shields.io/)
+![](https://badgen.net/badge/icon/azure?icon=azure&label=platform) [![Maintained](https://img.shields.io/badge/maintained-Yes%20as%20of%20December%202024-green.svg)](https://shields.io/)
 
 This project allows you to **easily spin up Active Directory labs in Azure** with domain-joined workstations, Windows Event Forwarding, Kibana, and Sysmon using Terraform/Ansible.
 
