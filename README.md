@@ -86,7 +86,7 @@ Here's an incomplete and biaised comparison with [DetectionLab](https://github.c
 
 - An Azure subscription. You can [create one for free](https://azure.microsoft.com/en-us/free/) and you get $200 of credits for the first 30 days. Note that this type of subscription has a limit of 4 vCPUs per region, which still allows you to run 1 domain controller and 2 workstations (with the default lab configuration).
 
-- A SSH key in `~/.ssh/id_rsa.pub`. Your private key must either be added to ssh-agent (typically, by running `ssh-add ~/.ssh/id_rsa` once and adding `eval "$(ssh-agent -s)"` in your `.bashrc`) or not encrypted with a passphrase.
+- A SSH key in `~/.ssh/id_rsa.pub`
 
 - [Terraform](https://www.terraform.io/downloads.html) >= 0.12
 
@@ -170,13 +170,6 @@ terraform apply -var 'region=East US 2'
 - [Common Operations: adding users, destroying the lab, etc.](./doc/operations.md)
 - [Project structure and directory organization](./doc/structure.md)
 - [Terraform variables available](./terraform/vars.tf)
-
-### Community
-
-Talks / posts referencing Adaz:
-
-- [Purple Teaming Cloud Identity: Simulation Labs for Red and Blue Teams](https://www.youtube.com/watch?v=xEn93_0jerk)
-- [(French) HoneyWISE : stratégie d’exploitation d’honeytokens en environnement Active Directory](https://www.cesar-conference.org/wp-content/uploads/2020/12/CESAR2020_070_A-TOURNYOL-du-CLOS_HoneyWISE_v3.pdf)
 
 ### Roadmap
 

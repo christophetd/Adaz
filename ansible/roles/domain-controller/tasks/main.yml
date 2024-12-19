@@ -1,33 +1,19 @@
 ---
+- name: Include accounts
+  include_vars:
+    file:  ../../account_domain.yml
+    name: accounts
+  tags: common
+
 - name: Include domain configuration file
   include_vars:
-    file: ../../../domain.yml
+    file: ../../domain-config.yml
     name: domain
   tags: common
 
-- name: Read credentials from domain configuration file
+- name: set domain dn
   set_fact:
-    ansible_user: "{{ domain.initial_domain_admin.username }}"
-    ansible_password: "{{ domain.initial_domain_admin.password }}"
-  when: "packer is not defined"
-  tags: common
-
-- include_tasks: base.yml
-  tags: base
-
-- name: Ensure domain is available
-  win_dsc:
-    resource_name: xWaitForADDomain
-    DomainName: "{{ domain.dns_name }}"
-    RetryCount: 100
-    RetryIntervalSec: 10
-  when: packer is not defined # TODO
-  tags: init
-
-- name: Set a weak password policy
-  win_command: powershell.exe -
-  args:
-    stdin: "Set-ADDefaultDomainPasswordPolicy -MinPasswordLength 1 -ComplexityEnabled $False -Identity {{ domain.dns_name }}"
+    domain_dn: "DC={{ domain.dns_name.split('.') | join(',DC=') }}"
   tags: init
 
 - name: Set domain root path (e.g. DC=xtof,DC=lab)
@@ -36,17 +22,124 @@
     domain_root_path: DC={{ domain.dns_name.split('.') | join(',DC=') }}
   tags: init
 
-- name: Ensure OUs exist
-  win_dsc:
-    resource_name: xADOrganizationalUnit
-    Name: "{{ item.split(',')[0].split('=')[1] }}" # CN=xxx,.. => keep 'xxx'
-    Path: "{{ item.split(',') | reject('search', item.split(',')[0]) | map('regex_replace', '(.+)', '\\1,') | join('') }}{{ domain_root_path }}"
-    ProtectedFromAccidentalDeletion: no
-  with_items: "{{ domain.organizational_units }}"
+- name: Set UPN domain (e.g. lab.local)
+  set_fact:
+    # e.g. lab.local
+    domain_upn_path: "{{ domain.dns_name }}"
   tags: init
 
+  
+#- name: Read ansible user from accounts
+#  set_fact:
+#    ansible_user: "{{ accounts.domadmin.username }}"
+#    ansible_password: "{{ accounts.domadmin.password }}"
+#    tags: common
+
+#- include_tasks: base.yml
+#  tags: base
+
+#- name: Ensure domain is available
+  #ansible.windows.win_dsc:
+    #resource_name: WaitForADDomain
+    #DomainName: "{{ domain.dns_name }}"
+    #WaitTimeout: 600
+    #RestartCount: 2
+    #tags: init
+
+#- name: install dsc module
+#  win_command: powershell.exe -
+#  args:
+#    stdin: 'Import-DscResource -ModuleName ActiveDirectoryDsc'
+#  tags: common
+
+
+#- name: Add OUs
+#  win_dsc:
+#    resource_name: ADOrganizationalUnit
+#    Name: "{{ item.name }}"
+#    Path: 
+    #Name: "{{ item.split(',')[0].split('=')[1] }}" # CN=xxx,.. => keep 'xxx'
+    #Path: "{{ item.split(',') | reject('search', item.split(',')[0]) | map('regex_replace', '(.+)', '\\1,') | join('') }}{{ domain_root_path }}"
+#    ProtectedFromAccidentalDeletion: no
+#    Description: "{{ item.description }}"
+#    Ensure: present
+#  with_items: "{{ domain.orgunits }}"
+#  tags: init
+
+  
+
+#- name: Read ansible user from accounts
+  #set_fact:
+    #ansible_user: "{{ accounts.domadmin.username }}"
+    #ansible_password: "{{ accounts.domadmin.password }}"
+    #tags: base
+
+- name: Ensure necessary Microsoft features are installed
+  ansible.windows.win_feature:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  # Available features can be listed using Get-WindowsFeature
+  - AD-Domain-Services
+  - RSAT-AD-AdminCenter
+  - RSAT-ADDS-Tools
+  tags: common
+ 
+#- name: Generate random safe mode password TODO
+#  set_fact:
+    #safe_mode_password: "{{ lookup('password', 'safe_mode_password.txt length=32') }}"
+    
+- name: Ensure domain is created
+  microsoft.ad.domain:
+    dns_domain_name: "{{ domain.dns_name }}"
+    safe_mode_password: "{{ accounts.domrestore.password }}"
+    domain_mode: Win2012R2
+    forest_mode: Win2012R2
+  register: domain_creation
+  tags: common
+
+- name: Reboot if domain was just created
+  ansible.windows.win_reboot: {}
+  when: domain_creation.reboot_required
+  tags: common
+
+- name: Ensure domain controllers are promoted
+  microsoft.ad.domain_controller:
+    dns_domain_name: "{{ domain.dns_name }}"
+    domain_admin_user: "{{ accounts.domadmin.username }}@{{ domain.dns_name }}"
+    domain_admin_password: "{{ accounts.domadmin.password }}"
+    safe_mode_password: "{{ accounts.domrestore.password }}"
+    state: domain_controller
+    reboot: true
+  register: dc_promotion
+  tags: common
+
+- name: Install Nuget Provider
+  ansible.windows.win_shell: Install-PackageProvider -Name Nuget -Force -Verbose
+  tags: common
+
+- name: Install Nuget Module
+  ansible.windows.win_shell: Install-Module -Name Nuget -Force -Verbose
+  tags: common
+
+- name: Install PowerShellGet 
+  ansible.windows.win_shell: Install-Module -Name PowerShellGet  -Force -Verbose
+  tags: common
+
+- name: Install PackageManagement
+  ansible.windows.win_shell: Install-Module -Name PackageManagement -Force -Verbose
+  tags: common
+
+
+- name: Install AD_DSC
+  community.windows.win_psmodule:
+    name: ActiveDirectoryDsc
+    skip_publisher_check: yes
+    state: latest
+  tags: common
+
 - name: Ensure domain groups exist
-  win_domain_group:
+  microsoft.ad.group:
     name: "{{ item.dn.split(',')[0].split('=')[1] }}"
     path: "{{ item.dn.split(',') | reject('search', item.dn.split(',')[0]) | map('regex_replace', '(.+)', '\\1,') | join('') }}{{ domain_root_path }}"
     scope: global
@@ -54,18 +147,112 @@
   with_items: "{{ domain.groups }}"
   tags: init
 
+- name: Ensure OU is present & protected
+  microsoft.ad.ou:
+   name: "{{ item.name }}"
+   path: "{{ domain_dn }}"
+   state: present
+   #protected: true
+  with_items: "{{ domain.orgunits }}"
+  tags: init
+
 - name: Ensure domain users exist
-  win_domain_user:
+  microsoft.ad.user:
     name: "{{ item.username }}"
     password: "{{ item.password | default(item.username) }}"
+    firstname: "{{ item.firstname | default(item.username) }}"
+    upn: "{{ item.username + '@' + domain_upn_path }}"
+    description: "user created by ansible"
     path: "{{ item.OU | default('CN=Users') }},{{ domain_root_path }}"
     enabled: yes
-  with_items: "{{ domain.users }}"
+    state: present
+  with_items: "{{ accounts.domusers }}"
   tags: init
 
 - name: Group memberships
-  win_domain_group_membership:
-    name: "{{ item.dn }},{{ domain_root_path }}"
-    members: "{{ item.members }}"
+  microsoft.ad.group:
+    #name: "{{ item.dn }},{{ domain_root_path }}"
+    name: "TestGroup"
+    scope: global
+    members:
+       Add:
+        "{{ item.members }}"
   with_items: "{{ domain.groups }}"
+  tags: init
+
+#- name: Reboot if server was just promoted to a domain controller
+#  win_reboot: {}
+#  when: dc_promotion.reboot_required
+#  tags: base
+
+
+  
+#- name: Install ActiveDirectory PS DSC 
+#  ansible.windows.win_shell: Install-Module -Name ActiveDirectoryDsc
+#  tags: base
+  
+#- name: ensure required powershell module is present
+#  win_psmodule:
+    #name: ActiveDirectoryDsc
+    #state: present
+  #tags: base  
+
+- 
+#- name: Wait for domain to be available
+#  ansible.windows.win_dsc:
+#    resource_name: WaitForADDomain
+#    DomainName: "{{ domain.dns_name }}"
+#    WaitTimeout: 600
+#    RestartCount: 2
+#  tags: base
+
+
+- name: disable windows defenderAS
+  ansible.windows.win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender" -ValueName "DisableAntiSpyware" -Type DWord -Value 1'
+  tags: init
+
+
+- name: disable windows defenderAV
+  ansible.windows.win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender" -ValueName "DisableAntiVirus" -Type DWord -Value 1'
+  tags: init
+
+
+- name: disable windows defenderRA
+  ansible.windows.win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender" -ValueName "DisableRoutinelyTakingAction" -Type DWord -Value 1'
+  tags: init
+
+- name: disable windows defenderRTM
+  ansible.windows.win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection" -ValueName "DisableRealtimeMonitoring" -Type DWord -Value 1'
+  tags: init
+
+- name: disable windows defenderBHM
+  ansible.windows.win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection" -ValueName "DisableBehaviorMonitoring" -Type DWord -Value 1'
+  tags: init
+
+- name: disable windows defenderOAP
+  ansible.windows.win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection" -ValueName "DisableOnAccessProtection" -Type DWord -Value 1'
+  tags: init
+
+- name: disable windows defenderSRT
+  ansible.windows.win_command: powershell.exe -
+  args:
+    stdin: 'Set-GPRegistryValue -Name "Default Domain Policy" -Key "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection" -ValueName "DisableScanOnRealtimeEnable" -Type DWord -Value 1'
+  tags: init
+
+- name: Set a weak password policy
+  ansible.windows.win_command: powershell.exe -
+  args:
+    stdin: 'Set-ADDefaultDomainPasswordPolicy -MinPasswordLength 1 -ComplexityEnabled $False -Identity {{ domain.dns_name }}'
   tags: init

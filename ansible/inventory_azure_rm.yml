@@ -1,13 +1,16 @@
-plugin: azure_rm
+plugin: azure.azcollection.azure_rm
 auth_source: cli
 # Note: The Ansible dynamic inventory plugin does not allow this to be specified dynamically at runtime
 # (see https://github.com/ansible/ansible/issues/69949) for a feature proposal
 include_vm_resource_groups:
-- ad-hunting-lab
+- ad-domtest-lab
+
 conditional_groups:
+  all_the_hosts: true
   domain_controllers: "tags.kind == 'domain-controller'"
   workstations: "tags.kind == 'workstation'"
-  elasticsearch: "tags.kind == 'elasticsearch'"
+  
 keyed_groups:
 - prefix: tag
   key: tags
+
